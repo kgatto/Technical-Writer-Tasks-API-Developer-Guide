@@ -11,4 +11,3 @@ The **Technical Writer Tasks API** is designed to help teams efficiently manage 
 - **Seamless Integration:** Simple endpoints make it easy to integrate with existing project management tools.
 
 This API is particularly useful for technical writers, documentation teams, and project managers who need a reliable system to track their work. Whether you're managing API documentation, SDK guides, or help center content, this API helps keep everything organized and accessible.
-
