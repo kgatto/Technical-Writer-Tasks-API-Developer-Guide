@@ -179,9 +179,3 @@ axios.post(url, data, { headers })
   .catch(error => {
     console.error('Failed to create task:', error.response.status, error.response.data);
   });
-
-# Best Practices
-
-    Rate Limiting: Be mindful of any rate limits imposed by the API. Implement appropriate handling for 429 Too Many Requests responses by introducing exponential backoff or retry mechanisms.
-    Error Handling: Always check for error responses and handle them gracefully in your application to enhance user experience and maintain stability.
-    API Key Security: Keep your API key confidential. Avoid hardcoding it in your source code, especially in publicly accessible repositories. Consider using environment variables or secure vaults to store sensitive information.
