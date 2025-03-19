@@ -1,20 +1,29 @@
-### 1. Retrieve All Tasks
+# Technical Writer Tasks API
+
+## 1. Retrieve All Tasks
 
 - **HTTP Method:** `GET`
 - **URI:** `/tasks`
 - **Description:** Fetches a list of all technical writer tasks, with optional filters.
 
-#### Required Headers:
+### Required Headers:
 
 - `X-API-KEY`: Your unique API key.
 
-#### Query Parameters:
+### Query Parameters:
 
-- `status` (optional): Filter tasks by their status. Valid values are `OPEN`, `IN_PROGRESS`, or `COMPLETED`.
-- `component` (optional): Filter tasks by their associated component. Valid values include `API_DOCS`, `HELP_CENTER`, `SDK_DOCS`, or `OAS_FILE`.
+- `status` (optional): Filter tasks by their status. Valid values:
+  - `OPEN`
+  - `IN_PROGRESS`
+  - `COMPLETED`
+- `component` (optional): Filter tasks by their associated component. Valid values:
+  - `API_DOCS`
+  - `HELP_CENTER`
+  - `SDK_DOCS`
+  - `OAS_FILE`
 - `updatedAfter` (optional): Filter tasks updated after a specific date in `YYYY-MM-DD` format.
 
-#### Success Response:
+### Success Response:
 
 - **Status Code:** `200 OK`
 - **Body:**
@@ -38,74 +47,3 @@
       "connected_tasks": []
     }
   ]
-
-## Error Responses:
-
-    Status Code: 401 Unauthorized
-        Description: API key is missing or invalid.
-
-# Create a New Task
-
-    HTTP Method: POST
-    URI: /tasks
-    Description: Adds a new technical writer task to the system.
-
-## Required Headers:
-
-    X-API-KEY: Your unique API key.
-    Content-Type: application/json
-
-{
-  "title": "string",
-  "description": "string",
-  "status": "OPEN",
-  "component": "API_DOCS",
-  "connected_tasks": [
-    {
-      "task_id": "string",
-      "title": "string",
-      "description": "string",
-      "status": "OPEN"
-    }
-  ]
-}
-## Field Descriptions:
-
-    title (string, required): The title of the task.
-    description (string, optional): Detailed information about the task.
-    status (string, optional): The current status of the task. Defaults to OPEN. Valid values are:
-        OPEN
-        IN_PROGRESS
-        COMPLETED
-    component (string, optional): The component associated with the task. Defaults to API_DOCS. Valid values are:
-        API_DOCS
-        HELP_CENTER
-        SDK_DOCS
-        OAS_FILE
-    connected_tasks (array of objects, optional): Tasks related to this task. Each object includes:
-        task_id (string, required): Identifier of the connected task.
-        title (string, required): Title of the connected task.
-        description (string, optional): Description of the connected task.
-        status (string, optional): Status of the connected task. Valid values are OPEN, IN_PROGRESS, or COMPLETED.
-
-## Success Response:
-
-    Status Code: 201 Created
-
-    Body:
-
-{
-  "task_id": "abcde12345",
-  "title": "Draft User Guide",
-  "description": "Create the initial draft of the user guide.",
-  "status": "OPEN",
-  "component": "HELP_CENTER",
-  "connected_tasks": []
-}
-
-Error Responses:
-
-    Status Code: 400 Bad Request
-        Description: The request body is malformed or missing required fields.
-    Status Code: 401 Unauthorized
-        Description: API key is missing or invalid.
