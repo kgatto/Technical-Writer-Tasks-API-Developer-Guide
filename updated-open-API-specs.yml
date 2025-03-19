@@ -1,0 +1,30 @@
+Updated OpenAPI Specification
+
+openapi: 3.0.0
+info:
+  title: Technical Writer Tasks API
+  description: API for managing technical writer tasks.
+  version: 1.0.0
+servers:
+  - url: https://api.techwriter.xyz
+components:
+  securitySchemes:
+	ApiKeyAuth:
+  	type: apiKey
+  	in: header
+  	name: X-API-KEY
+  schemas:
+	Task:
+  	type: object
+  	properties:
+    	task_id:
+      	type: string
+    	title:
+      	type: string
+    	description:
+      	type: string
+    	status:
+      	$ref: '#/components/schemas/StatusEnum'
+    	component:
+      	$ref
+::contentReference[oaicite:0]{index=0}
