@@ -2,6 +2,7 @@
 
 ## Python Example: Creating a New Task
 
+```python
 import requests
 import json
 
