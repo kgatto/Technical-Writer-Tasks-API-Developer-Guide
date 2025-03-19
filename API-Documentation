@@ -1,0 +1,187 @@
+# Technical Writer Tasks API Developer Guide
+
+## Introduction
+
+The Technical Writer Tasks API enables efficient management of tasks related to technical writing projects. It provides endpoints to retrieve existing tasks and create new ones, facilitating seamless integration into your workflow.
+
+## Authentication
+
+This API employs API key-based authentication. To access the endpoints, include your unique API key in the `X-API-KEY` header of each request. Ensure that your API key remains confidential to prevent unauthorized access.
+
+## Endpoint Descriptions
+
+### 1. Retrieve All Tasks
+
+- **HTTP Method:** `GET`
+- **URI:** `/tasks`
+- **Description:** Fetches a list of all technical writer tasks, with optional filters.
+
+#### Required Headers:
+
+- `X-API-KEY`: Your unique API key.
+
+#### Query Parameters:
+
+- `status` (optional): Filter tasks by their status. Valid values are `OPEN`, `IN_PROGRESS`, or `COMPLETED`.
+- `component` (optional): Filter tasks by their associated component. Valid values include `API_DOCS`, `HELP_CENTER`, `SDK_DOCS`, or `OAS_FILE`.
+- `updatedAfter` (optional): Filter tasks updated after a specific date in `YYYY-MM-DD` format.
+
+#### Success Response:
+
+- **Status Code:** `200 OK`
+- **Body:**
+
+  ```json
+  [
+    {
+      "task_id": "12345",
+      "title": "Update API Documentation",
+      "description": "Revise the authentication section.",
+      "status": "IN_PROGRESS",
+      "component": "API_DOCS",
+      "connected_tasks": []
+    },
+    {
+      "task_id": "67890",
+      "title": "Create SDK Guide",
+      "description": "Develop a comprehensive guide for the new SDK.",
+      "status": "OPEN",
+      "component": "SDK_DOCS",
+      "connected_tasks": []
+    }
+  ]
+
+## Error Responses:
+
+    Status Code: 401 Unauthorized
+        Description: API key is missing or invalid.
+
+# Create a New Task
+
+    HTTP Method: POST
+    URI: /tasks
+    Description: Adds a new technical writer task to the system.
+
+## Required Headers:
+
+    X-API-KEY: Your unique API key.
+    Content-Type: application/json
+
+{
+  "title": "string",
+  "description": "string",
+  "status": "OPEN",
+  "component": "API_DOCS",
+  "connected_tasks": [
+    {
+      "task_id": "string",
+      "title": "string",
+      "description": "string",
+      "status": "OPEN"
+    }
+  ]
+}
+## Field Descriptions:
+
+    title (string, required): The title of the task.
+    description (string, optional): Detailed information about the task.
+    status (string, optional): The current status of the task. Defaults to OPEN. Valid values are:
+        OPEN
+        IN_PROGRESS
+        COMPLETED
+    component (string, optional): The component associated with the task. Defaults to API_DOCS. Valid values are:
+        API_DOCS
+        HELP_CENTER
+        SDK_DOCS
+        OAS_FILE
+    connected_tasks (array of objects, optional): Tasks related to this task. Each object includes:
+        task_id (string, required): Identifier of the connected task.
+        title (string, required): Title of the connected task.
+        description (string, optional): Description of the connected task.
+        status (string, optional): Status of the connected task. Valid values are OPEN, IN_PROGRESS, or COMPLETED.
+
+## Success Response:
+
+    Status Code: 201 Created
+
+    Body:
+
+{
+  "task_id": "abcde12345",
+  "title": "Draft User Guide",
+  "description": "Create the initial draft of the user guide.",
+  "status": "OPEN",
+  "component": "HELP_CENTER",
+  "connected_tasks": []
+}
+
+Error Responses:
+
+    Status Code: 400 Bad Request
+        Description: The request body is malformed or missing required fields.
+    Status Code: 401 Unauthorized
+        Description: API key is missing or invalid.
+
+
+# Code Examples
+## Python Example: Creating a New Task
+
+import requests
+import json
+
+url = 'https://api.techwriter.xyz/tasks'
+api_key = 'your_api_key_here'
+
+headers = {
+    'X-API-KEY': api_key,
+    'Content-Type': 'application/json'
+}
+
+data = {
+    "title": "Draft User Guide",
+    "description": "Create the initial draft of the user guide.",
+    "status": "OPEN",
+    "component": "HELP_CENTER",
+    "connected_tasks": []
+}
+
+response = requests.post(url, headers=headers, data=json.dumps(data))
+
+if response.status_code == 201:
+    print('Task created successfully:', response.json())
+else:
+    print('Failed to create task:', response.status_code, response.text)
+
+## JavaScript Example (Node.js): Creating a New Task
+
+const axios = require('axios');
+
+const url = 'https://api.techwriter.xyz/tasks';
+const apiKey = 'your_api_key_here';
+
+const headers = {
+  'X-API-KEY': apiKey,
+  'Content-Type': 'application/json'
+};
+
+const data = {
+  title: 'Draft User Guide',
+  description: 'Create the initial draft of the user guide.',
+  status: 'OPEN',
+  component: 'HELP_CENTER',
+  connected_tasks: []
+};
+
+axios.post(url, data, { headers })
+  .then(response => {
+    console.log('Task created successfully:', response.data);
+  })
+  .catch(error => {
+    console.error('Failed to create task:', error.response.status, error.response.data);
+  });
+
+# Best Practices
+
+    Rate Limiting: Be mindful of any rate limits imposed by the API. Implement appropriate handling for 429 Too Many Requests responses by introducing exponential backoff or retry mechanisms.
+    Error Handling: Always check for error responses and handle them gracefully in your application to enhance user experience and maintain stability.
+    API Key Security: Keep your API key confidential. Avoid hardcoding it in your source code, especially in publicly accessible repositories. Consider using environment variables or secure vaults to store sensitive information.
