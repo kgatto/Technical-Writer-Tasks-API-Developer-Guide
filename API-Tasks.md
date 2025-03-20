@@ -48,3 +48,11 @@
     }
   ]
 
+Error Responses:
+Retrieve All Tasks (GET /tasks)
+Status Code	Description
+401 Unauthorized	API key is missing or invalid.
+Create a New Task (POST /tasks)
+Status Code	Description
+400 Bad Request	The request body is malformed or missing required fields.
+401 Unauthorized	API key is missing or invalid.
