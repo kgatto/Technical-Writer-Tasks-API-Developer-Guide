@@ -7,24 +7,181 @@ info:
   version: 1.0.0
 servers:
   - url: https://api.techwriter.xyz
+security:
+  - ApiKeyAuth: []
+
 components:
   securitySchemes:
-	ApiKeyAuth:
-  	type: apiKey
-  	in: header
-  	name: X-API-KEY
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+
   schemas:
-	Task:
-  	type: object
-  	properties:
-    	task_id:
-      	type: string
-    	title:
-      	type: string
-    	description:
-      	type: string
-    	status:
-      	$ref: '#/components/schemas/StatusEnum'
-    	component:
-      	$ref
-::contentReference[oaicite:0]{index=0}
+    Task:
+      type: object
+      required:
+        - task_id
+        - title
+        - description
+        - status
+        - component
+      properties:
+        task_id:
+          type: string
+          description: Unique identifier for the task.
+        title:
+          type: string
+          description: The title of the task.
+        description:
+          type: string
+          description: Detailed description of the task.
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        component:
+          $ref: '#/components/schemas/ComponentEnum'
+        connected_tasks:
+          type: array
+          description: List of related or dependent tasks.
+          items:
+            $ref: '#/components/schemas/ConnectedTask'
+
+    TaskInput:
+      type: object
+      required:
+        - title
+        - description
+        - status
+        - component
+      properties:
+        title:
+          type: string
+          description: The title of the task.
+        description:
+          type: string
+          description: Detailed description of the task.
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        component:
+          $ref: '#/components/schemas/ComponentEnum'
+        connected_tasks:
+          type: array
+          description: List of related or dependent tasks.
+          items:
+            $ref: '#/components/schemas/ConnectedTask'
+
+    ConnectedTask:
+      type: object
+      properties:
+        task_id:
+          type: string
+          description: The ID of the connected task.
+        title:
+          type: string
+          description: The title of the connected task.
+        description:
+          type: string
+          description: A brief description of the connected task.
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+
+    StatusEnum:
+      type: string
+      enum: [OPEN, IN_PROGRESS, COMPLETED]
+      description: The current status of a task.
+
+    ComponentEnum:
+      type: string
+      enum: [API_DOCS, HELP_CENTER, SDK_DOCS, OAS_FILE]
+      description: The component to which the task belongs.
+
+  responses:
+    UnauthorizedError:
+      description: Unauthorized, API key missing or invalid.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Unauthorized - API key missing or invalid"
+
+    BadRequestError:
+      description: The request body is malformed or missing required fields.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Bad Request - Missing required fields"
+
+paths:
+  /tasks:
+    get:
+      summary: Retrieve all technical writer tasks.
+      description: Fetches a list of all technical writer tasks, with optional filters.
+      operationId: getTasks
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: status
+          in: query
+          description: Filter tasks by status.
+          required: false
+          schema:
+            $ref: '#/components/schemas/StatusEnum'
+        - name: component
+          in: query
+          description: Filter tasks by component.
+          required: false
+          schema:
+            $ref: '#/components/schemas/ComponentEnum'
+        - name: updatedAfter
+          in: query
+          description: Filter tasks that have been updated after a specific date (YYYY-MM-DD).
+          required: false
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: A list of technical writer tasks.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /task:
+    post:
+      summary: Create a new technical writer task.
+      description: Adds a new task to the system.
+      operationId: createTask
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        description: JSON payload to create a new task.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskInput'
+      responses:
+        '201':
+          description: Task successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+
